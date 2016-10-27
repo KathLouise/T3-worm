@@ -220,6 +220,13 @@ int connectIP(unsigned int port_number, char *ip){
     struct sockaddr_in server_addr;
     int sock, try_connect, recv, send;
     char buffer[1024] = {0};
+    FILE *output;
+
+    output = fopen("varredura.txt", "w+");
+    if(output == NULL){ 
+        printf("Erro: Nao foi possivel criar o arquivo de saida\n");
+        exit(0);
+    }
 
     //cria o socket
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -257,14 +264,8 @@ int connectIP(unsigned int port_number, char *ip){
         bzero(buffer, 255);
 
         recv = read(sock, buffer, 1023);
-        if(recv < 0){
-            printf("%s\t %d\n", ip, port_number);
-            fflush(stdout);
-            printf("Erro na leitura.\n\n");
-            fflush(stdout);
-        }else{
-            printf("%s\t %d\t %s\n\n", ip, port_number, buffer);
-            fflush(stdout);
+        if(recv > 0){
+	    fprintf(output, "%s %d %s\n", ip, port_number, buffer);
         }
     }
     
@@ -289,15 +290,6 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
     time(&r_time);
     info = gmtime(&r_time);
     printf("\nVarredura iniciada em %s\n", asctime(info));
-    fflush(stdout);
-
-    printf("IP: %s\n", range_ipSeq);
-    fflush(stdout);
-    printf("Portas: %s\n", range_portSeq);
-    fflush(stdout);
-
-    printf("\n---------\n\n");
-    fflush(stdout);
 
     //Cuidando do range de IP/IP
     
@@ -358,5 +350,10 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
             fflush(stdout);
         }
     }
+    
+    time(&r_time);
+    info = gmtime(&r_time);
+    printf("Varredura finalizada em %s\n", asctime(info));
+    fflush(stdout);
 }
 //-------------------------------------------------------------------//
