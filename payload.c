@@ -6,7 +6,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define PATH "$HOME"
+//#define PATH "$HOME"
+#define PATH "/home/tcc/dataset"
 #define TAM_NAMEF 256
 
 int remove_directory(const char *path)

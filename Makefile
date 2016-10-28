@@ -2,7 +2,7 @@
 
 all: worm
 
-worm: worm.o portscanner.o payload.o
+worm: worm.o bruteforce.o payload.o portscanner.o
 	$(CC) -o $@ $^
 
 clean:
