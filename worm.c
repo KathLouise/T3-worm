@@ -12,6 +12,7 @@
 void main(int argc, char *argv[]){
     char range_ipSeq[100];
     char range_portSeq[100];
+    char **paramIPPort;
     unsigned int lenKey;
     int random, success;
 
@@ -32,9 +33,7 @@ void main(int argc, char *argv[]){
     random = rand();
     
     initPortScanner(range_ipSeq, range_portSeq);
-    printf("%d\n", random);
-    
-    //target_selection();
+    target_selection(paramIPPort);
 
     if(random % 2){
         success = bruteforce(lenKey);

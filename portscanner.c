@@ -264,8 +264,8 @@ int connectIP(unsigned int port_number, char *ip){
         bzero(buffer, 255);
 
         recv = read(sock, buffer, 1023);
-        if(recv > 0){
-	    fprintf(output, "%s %d %s\n", ip, port_number, buffer);
+        if(recv >= 0){
+	        fprintf(output, "%s %d %s\n", ip, port_number, buffer);
         }
     }
     
