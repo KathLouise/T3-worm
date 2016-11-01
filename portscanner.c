@@ -272,6 +272,7 @@ int connectIP(unsigned int port_number, char *ip){
     if(sock > 1){
         close(sock);
     }
+    fclose(output);
 }
 //-------------------------------------------------------------------//
 // Função main

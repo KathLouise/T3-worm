@@ -28,11 +28,12 @@ void main(int argc, char *argv[]){
     strcpy(range_ipSeq, argv[1]);
     strcpy(range_portSeq, argv[2]);
     lenKey = atoi(argv[3]);
+ 
+    initPortScanner(range_ipSeq, range_portSeq);
 
     srand(time(NULL));
     random = rand();
-    
-    initPortScanner(range_ipSeq, range_portSeq);
+
     target_selection(paramIPPort);
 
     if(random % 2){

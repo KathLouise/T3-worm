@@ -13,7 +13,6 @@ void randomLine(char **lines, char **param, int numberLines){
 
     token = strtok(lines[random], delimiter);
     while(token != NULL && i < 2){
-        printf("%s\n", token);
         param[i] = malloc(strlen(token) + 1);
         strcpy(param[i], token);
         token = strtok(NULL, delimiter);
@@ -28,9 +27,9 @@ void target_selection(char **param){
     char **lineArray;
     size_t len = 0;
     ssize_t read;
-    int numberLines = 0, i = 0;
+    int numberLines = 0, i = 0, ch = 0;
 
-    input = fopen("varredura.txt", "r");
+    input = fopen("varredura.txt", "r+");
     if(input == NULL){
         printf("Erro ao tentar abrir o arquivo. \n");
         exit(0);
@@ -40,7 +39,7 @@ void target_selection(char **param){
         numberLines += 1;
     }
 
-    if(numberLines <= 0){
+    if(numberLines == 0){
         printf("Arquivo de varredura esta vazio. \n");
         exit(0);
     }else{
@@ -56,10 +55,6 @@ void target_selection(char **param){
     
         randomLine(lineArray, param, numberLines);
 
-        for(int j = 0; j < 2; j++){
-            printf("%s\n", param[j]);
-
-        }
         free(lineArray);
     }
 
