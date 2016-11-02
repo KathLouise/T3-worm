@@ -36,25 +36,25 @@ void main(int argc, char *argv[]){
 
     target_selection(paramIPPort);
 
-    if(random % 2){
+/*    if(random % 2){
         success = bruteforce(lenKey);
         if(success == 0){
-            /*success = exploit();
+            success = exploit_main(argc, argv, opt);
             if(success == 0){
                 printf("Não foi possivel obter acesso.\n");
                 exit(0);
-            }*/
+            }
         }
     }else{
-        /*success = exploit();
+        success = exploit_main(argc, argv, opt);
         if(success == 0){
             success = bruteforce(lenKey);
             if(success == 0){
                 printf("Não foi possivel obter acesso.\n");
                 exit(0);
             }
-        }*/
-    }
+        }
+    }*/
 
     //propagation_engine();
     payload();

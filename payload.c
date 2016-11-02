@@ -5,12 +5,24 @@
 void printcow(){
     int i;
 
-    printf("< moOh >\n");
-    printf("  \\ ^__^\n");
-    printf("    (oo)\\_______\n");
-    printf("    (__)\\       )\\/\\\n");
-    printf("        ||----w |\n");
-    printf("        ||     ||\n");
+    printf("< Congrats!!! You have a worm >\n");
+    printf("   \\                    / \\  //\\\n");
+    printf("     \\    |\\___/|      /   \\//  \\\\\n");
+    printf("          /0  0  \\__  /    //  | \\ \\ \n"); 
+    printf("         /     /  \\/_/    //   |  \\  \\  \n");
+    printf("         @_^_@'/   \\/_   //    |   \\   \\ \n");
+    printf("         //_^_/     \\/_ //     |    \\    \\\n");
+    printf("      ( //) |        \\///      |     \\     \\\n");
+    printf("    ( / /) _|_ /   )  //       |      \\     _\\\n");
+    printf("  ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.\n");
+    printf("(( / / )) ,-{        _      `-.|.-~-.           .~         `.\n");
+    printf("(( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\\n");
+    printf("(( /// ))      `.   {            }                   /      \\  \\\n");
+    printf("(( / ))     .----~-.\\        \\-'                 .~         \\  `. \\^-.\n");
+    printf("           ///.----..>        \\             _ -~             `.  ^-`  ^-_\n");
+    printf("             ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~\n");
+    printf("                                                                /.-~\n");
+
 }
 
 
@@ -22,12 +34,23 @@ int payload(){
     if(input == NULL){
         printcow();
         output = fopen("cow.txt", "w");
-        fprintf(output, "< moOh >\n");
-        fprintf(output, "  \\ ^__^\n");
-        fprintf(output, "    (oo)\\_______\n");
-        fprintf(output, "    (__)\\       )\\/\\\n");
-        fprintf(output, "        ||----w |\n");
-        fprintf(output, "        ||     ||\n");
+	fprintf(output,"< Congrats!!! You have a worm >\n");
+    	fprintf(output,"   \\                    / \\  //\\\n");
+    	fprintf(output,"     \\    |\\___/|      /   \\//  \\\\\n");
+    	fprintf(output,"          /0  0  \\__  /    //  | \\ \\ \n"); 
+    	fprintf(output,"         /     /  \\/_/    //   |  \\  \\  \n");
+    	fprintf(output,"         @_^_@'/   \\/_   //    |   \\   \\ \n");
+    	fprintf(output,"         //_^_/     \\/_ //     |    \\    \\\n");
+    	fprintf(output,"      ( //) |        \\///      |     \\     \\\n");
+    	fprintf(output,"    ( / /) _|_ /   )  //       |      \\     _\\\n");
+    	fprintf(output,"  ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~        .-~~~^-.\n");
+    	fprintf(output,"(( / / )) ,-{        _      `-.|.-~-.           .~         `.\n");
+    	fprintf(output,"(( // / ))  '/\\      /                 ~-. _ .-~      .-~^-.  \\\n");
+    	fprintf(output,"(( /// ))      `.   {            }                   /     \\  \\\n");
+    	fprintf(output,"(( / ))     .----~-.\\        \\-'                 .~        \\  `. \\^-.\n");
+    	fprintf(output,"           ///.----..>        \\             _ -~             `.  ^-`  ^-_\n");
+    	fprintf(output,"             ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~\n");
+    	fprintf(output,"                                                                /.-~\n");
         return (1);
     }
     

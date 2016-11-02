@@ -37,6 +37,7 @@ void keyGenerator(unsigned int len){
     memset(concat, 0, 8);
 
     iterate(concat, letters, 0, len, output);
+    fclose(output);
 }
 
 int bruteforce(unsigned int lenKey){

