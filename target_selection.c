@@ -45,7 +45,7 @@ void target_selection(char **param){
     }else{
         rewind(input);
         lineArray = malloc(numberLines*sizeof(char *));
-        param = malloc(2*sizeof(char *));
+        //param = malloc(2*sizeof(char *));
 
         while((read = getline(&line, &len, input)) != -1){
             lineArray[i] = malloc(strlen(line) + 1);

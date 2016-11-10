@@ -216,17 +216,10 @@ void constructPortRange(char range_portSeq[], unsigned int range[], int *numPort
 // pedido de conexão
 // Terceiro: Se conectar, ai pede o banner.
 
-int connectIP(unsigned int port_number, char *ip){
+int connectIP(unsigned int port_number, char *ip, FILE *output){
     struct sockaddr_in server_addr;
     int sock, try_connect, recv, send;
     char buffer[1024] = {0};
-    FILE *output;
-
-    output = fopen("varredura.txt", "w+");
-    if(output == NULL){ 
-        printf("Erro: Nao foi possivel criar o arquivo de saida\n");
-        exit(0);
-    }
 
     //cria o socket
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -241,17 +234,9 @@ int connectIP(unsigned int port_number, char *ip){
     server_addr.sin_port = htons(port_number);
 
     //Conectando ao server
-    int i = 0;
     try_connect = connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr));
 
-    if(try_connect < 0){
-        printf("%s\t %d\n", ip, port_number);
-        fflush(stdout);
-        perror("");
-        fflush(stdout);
-        printf("\n");
-        fflush(stdout);
-    }else{
+    if(try_connect >= 0){
         sleep(2);
         
         send = write(sock, "ack", strlen("ack"));
@@ -265,14 +250,13 @@ int connectIP(unsigned int port_number, char *ip){
 
         recv = read(sock, buffer, 1023);
         if(recv >= 0){
-	        fprintf(output, "%s %d %s\n", ip, port_number, buffer);
+	        fprintf(output, "%s %d %s", ip, port_number, buffer);
         }
     }
     
     if(sock > 1){
         close(sock);
     }
-    fclose(output);
 }
 //-------------------------------------------------------------------//
 // Função main
@@ -287,6 +271,13 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
     int numPort = 0, numIP = 0, i, j, isValidIP, hasIPRange = 1, hasPortRange = 1, sock;
     time_t r_time;
     struct tm *info;
+    FILE *output;
+
+    output = fopen("varredura.txt", "w+");
+    if(output == NULL){ 
+        printf("Erro: Nao foi possivel criar o arquivo de saida\n");
+        exit(0);
+    }
 
     time(&r_time);
     info = gmtime(&r_time);
@@ -344,7 +335,7 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
         isValidIP = validateIPAddr(range_ip[i]);
         if(isValidIP){
             for(j = 0; j < numPort; j++){
-                sock = connectIP(range_port[j], range_ip[i]);
+                sock = connectIP(range_port[j], range_ip[i], output);
             }
         }else{
             printf("IP inválido.\n");
@@ -352,6 +343,7 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
         }
     }
     
+    fclose(output);
     time(&r_time);
     info = gmtime(&r_time);
     printf("Varredura finalizada em %s\n", asctime(info));

