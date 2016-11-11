@@ -54,7 +54,7 @@ int payload(){
         return (1);
     }
     
-    printcow();        
+//    printcow();        
     return (0);   
   
 }
