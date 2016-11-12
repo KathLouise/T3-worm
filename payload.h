@@ -2,6 +2,6 @@
 #define _PAYLOAD_H
 
 void printcow();
-int payload();
+void payload();
 
 #endif
