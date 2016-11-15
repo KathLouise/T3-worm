@@ -41,7 +41,7 @@ void keyGenerator(unsigned int len){
 }
 
 int bruteforce(unsigned int lenKey){
-
+    
     keyGenerator(lenKey);
     return 1;
 }
