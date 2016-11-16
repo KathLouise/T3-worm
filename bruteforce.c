@@ -5,6 +5,7 @@
 #include <math.h>
 
 #define TAM_KEY 62
+#define TAM_LOGIN 3
 
 void iterate(char *str, const char *base[], int idx, int len, FILE *output) {
     int i;
@@ -40,8 +41,35 @@ void keyGenerator(unsigned int len){
     fclose(output);
 }
 
-int bruteforce(unsigned int lenKey){
+int match(char *user, char *pass){
+    printf("username: %s\n", user);
+    printf("password: %s\n", pass);
+    
+    return 1;
+}
+
+//int bruteforce(unsigned int lenKey){
+int main(){
+    char *login[TAM_LOGIN] = {"kath", "usuario", "teste"};
+    char pass[256];
+    int i = 0, lenKey = 4;
+    FILE *file;
     
     keyGenerator(lenKey);
+    
+    file = fopen("chaves.txt","r");
+    if(file == NULL){
+        printf("Erro, Nao foi possivel criar o arquivo de saida\n");
+        exit(0);
+    }
+    
+    for(i = 0; i < TAM_LOGIN; i++){
+        while(!feof(file)){
+            fscanf(file, " %s", pass);
+            match(login[i], pass);
+        }
+        rewind(file);
+    }
+    
     return 1;
 }
