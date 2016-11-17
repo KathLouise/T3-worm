@@ -71,8 +71,8 @@ void main(int argc, char *argv[]){
             }
         }
     }*/
-    strcpy(username, "kath\n");
-    strcpy(pass, "jack\n");
+    strcpy(username, "kath");
+    strcpy(pass, "jack");
     
     printf("-----------------------------------\n");
     printf("Propagation Engine iniciado\n"); 

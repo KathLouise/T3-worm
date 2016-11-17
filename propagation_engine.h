@@ -6,6 +6,7 @@ void fileTransfer(char *ip, char *username, char *pass);
 void negotiate(int sock, unsigned char *buf, int len);
 static void terminalSet();
 static void terminalReset();
+void connect_to_server(int sock, int port, char* address);
 void fileExecute(char *ip, char* username, char *passwrd);
 void propagation_engine(char* ip, char *username, char *pass);
 

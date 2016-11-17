@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define TAM_KEY 62
-#define TAM_LOGIN 3
+#define TAM_LOGIN 27
 
 void iterate(char *str, const char *base[], int idx, int len, FILE *output) {
     int i;
@@ -48,11 +48,11 @@ int match(char *user, char *pass){
     return 1;
 }
 
-//int bruteforce(unsigned int lenKey){
-int main(){
-    char *login[TAM_LOGIN] = {"kath", "usuario", "teste"};
+int bruteforce(unsigned int lenKey){
+//int main(){
+    char *login[TAM_LOGIN] = {"root", "bin", "daemon", "adm", "lp", "sync", "shutdown", "halt", "mail", "news", "uucp", "operator", "games", "gopher", "ftp", "nobody", "mailnull", "rpm", "rpc", "rpcuser", "nfsnobody", "nscd", "ident", "radvd", "kath", "usuario", "teste"};
     char pass[256];
-    int i = 0, lenKey = 4;
+    int i = 0;// lenKey = 4;
     FILE *file;
     
     keyGenerator(lenKey);

