@@ -138,8 +138,8 @@ int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
     }
 
     if(achou == 0){
-        printf("Nao foi encontrado uma combinacao de usuario e senha.\n");
-        exit(0);
+        printf("Brute Force: Nao foi encontrado uma combinacao de usuario e senha.\n");
+        return 0;
     }
     
     return 1;
