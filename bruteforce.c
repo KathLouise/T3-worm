@@ -71,7 +71,7 @@ int match(char *username, char *password, char *ip){
     memset(&server, '0', sizeof(server));
     server.sin_addr.s_addr = inet_addr(ip);
     server.sin_family = AF_INET;
-    server.sin_port = htons(21);
+    server.sin_port = htons(20);
 
     if(connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0){
         perror("");
@@ -102,7 +102,7 @@ int match(char *username, char *password, char *ip){
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     
-    close(sock);
+    shutdown(sock, 2);
     if(buffer[0] != error){
         return 1;
     }
@@ -139,8 +139,8 @@ int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
 
     if(achou == 0){
         printf("Nao foi encontrado uma combinacao de usuario e senha.\n");
-        exit(0);
+        return(EXIT_FAILURE);
     }
     
-    return 1;
+    return EXIT_SUCCESS;
 }

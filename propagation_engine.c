@@ -15,6 +15,19 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
+// Função que transforma um inteiro em char
+// É dependente da base do inteiro, para efetuar a conversão correta
+
+char* intTochar(int val, int base){
+	static char buf[32] = {0};
+	int i = 30;
+	
+	for(; val && i ; --i, val /= base)
+		buf[i] = "0123456789abcdef"[val % base];
+	
+	return &buf[i+1];
+}
+
 void parseIPPort(char buffer[], char *ip, int *port){
     char *token = (char*) malloc(sizeof(char));
     char *aux = (char*) malloc(sizeof(char));
@@ -287,11 +300,13 @@ void fileTransfer(char *ip, char *username, char *password){
 
 void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){
     char buff[1024];
+    char *tamKey;
     FILE *file;
     pid_t child; // note that the actual return type of fork is 
              // pid_t, though it's probably just an int typedef'd or macro'd
 
-    
+    tamKey = intTochar(lenKey,10);
+
     child = vfork();
     if (child == -1){
          perror("Fork failed");
@@ -356,9 +371,9 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
         strcat(buff," ");
         strcat(buff, range_portSeq);
         strcat(buff," ");
-        strcat(buff, lenKey);
+        strcat(buff, tamKey);
         strcat(buff,"\n");
-        fprintf(file, buff);
+        fprintf(file, "%s", buff);
         
         //exit
         fflush(file);
