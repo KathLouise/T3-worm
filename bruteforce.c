@@ -103,6 +103,7 @@ int match(char *username, char *password, char *ip){
     recv(sock, buffer, sizeof(buffer), 0);
     
     shutdown(sock, 2);
+    sleep(5);
     if(buffer[0] != error){
         return 1;
     }
