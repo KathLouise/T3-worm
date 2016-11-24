@@ -236,9 +236,10 @@ int connectIP(unsigned int port_number, char *ip, FILE *output){
     //Conectando ao server
     try_connect = connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr));
 
+
     if(try_connect >= 0){
         sleep(2);
-        
+
         send = write(sock, "ack", strlen("ack"));
         if(send < 0){
             printf("%s\t %d\n", ip, port_number);
@@ -249,8 +250,10 @@ int connectIP(unsigned int port_number, char *ip, FILE *output){
         bzero(buffer, 255);
 
         recv = read(sock, buffer, 1023);
+        
         if(recv >= 0){
-	        fprintf(output, "%s %d %s", ip, port_number, buffer);
+            fprintf(output, "%s %d %s", ip, port_number, buffer);
+            printf("%s %d %s\n", ip, port_number, buffer);
         }
     }
     
