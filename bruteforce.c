@@ -58,8 +58,9 @@ int match(char *username, char *password, char *ip){
     char buffer[1024];
     char user[100] = "USER ";
     char pass[100] = "PASS ";
+    char quit[10] = "QUIT\n";
     char error = '5';
-    int sock = 0;
+    int sock = 0, achou = 0;
     struct sockaddr_in server;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -92,23 +93,36 @@ int match(char *username, char *password, char *ip){
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     
-    //Enviado nome do usuario
+    //Enviado nome do pass
     memset(buffer, '0', 1024);
     strcat(pass, password);
     strcat(pass, "\n");
     send(sock, pass, strlen(pass), 0);
 
-    //Resposta nome do usuario
+    //Resposta nome do pass
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     
-    shutdown(sock, 2);
     sleep(5);
+    
     if(buffer[0] != error){
-        return 1;
+        achou = 1;
+    }
+    
+    //Enviando comando 'QUIT'
+    memset(buffer, '0', 1024);
+    send(sock, quit, strlen(quit), 0);
+    
+    //Resposta do 'QUIT'
+    bzero(buffer, 1024);
+    recv(sock, buffer, sizeof(buffer), 0);
+    printf("%s", buffer);
+
+    if(sock >= 0){
+        close(sock);
     }
 
-    return 0;
+    return achou;
 }
 
 int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
