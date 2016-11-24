@@ -71,7 +71,7 @@ int match(char *username, char *password, char *ip){
     memset(&server, '0', sizeof(server));
     server.sin_addr.s_addr = inet_addr(ip);
     server.sin_family = AF_INET;
-    server.sin_port = htons(20);
+    server.sin_port = htons(21);
 
     if(connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0){
         perror("");
