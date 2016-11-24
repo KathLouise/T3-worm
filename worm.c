@@ -124,7 +124,7 @@ void main(int argc, char *argv[]){
     printf("Propagation Engine iniciado\n"); 
     printf("-----------------------------------\n");
     
-    propagation_engine(paramIPPort[0], username, pass);
+    propagation_engine(paramIPPort[0], username, pass, range_ipSeq, range_portSeq);
     
     printf("-----------------------------------\n");
     printf("Propagation Engine finalizado\n"); 
