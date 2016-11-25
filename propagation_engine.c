@@ -250,7 +250,7 @@ void fileTransfer(char *ip, char *username, char *password){
     
     //CONNECT FTP
     sockT = socket(AF_INET, SOCK_STREAM, 0);
-    if(sock < 0){
+    if(sockT < 0){
         printf("Erro ao criar o socket.\n");
         exit(1);
     }  
