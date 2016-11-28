@@ -46,7 +46,7 @@ void keyGenerator(unsigned int len){
 	int i;
     char c;
     
-	int n = len + 1;//numero de caracteres ou posições de uma sequencia
+	int n = len;//numero de caracteres ou posições de uma sequencia
 	int m = TAM_KEY; //numero total de elementos, objetos
 
 	int seq[n+1];
@@ -185,7 +185,7 @@ int match(char *username, char *password, char *ip){
 }
 
 int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
-    char *login[TAM_LOGIN] = {"usuario","root", "kath", "teste"};
+    char *login[TAM_LOGIN] = {"usuario", "kath", "teste"};
     char pass[256];
     int i = 0, result = 0, achou = 0;
     FILE *file;
