@@ -142,7 +142,7 @@ int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
     int i = 0, result = 0, achou = 0;
     FILE *file;
     
-    //keyGenerator(lenKey);
+    keyGenerator(lenKey);
     
     file = fopen("chaves.txt","r");
     if(file == NULL){

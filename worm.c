@@ -19,7 +19,7 @@ void main(int argc, char *argv[]){
     char **paramIPPort;
     char **entryExploit = malloc(4 * sizeof(char*));
     unsigned int lenKey;
-    int random, success, i, cont;
+    int random, i, cont, success = EXIT_FAILURE;
     pid_t child;
 
     if(argc < 4){
@@ -55,6 +55,7 @@ void main(int argc, char *argv[]){
     
     initPortScanner(range_ipSeq, range_portSeq);
     
+    printf("-----------------------------------\n");
     printf("Port Scanner finalizado\n"); 
     
     paramIPPort = malloc(2*sizeof(char *));
@@ -96,9 +97,8 @@ void main(int argc, char *argv[]){
             if(child == -1){
                 perror("");
             }else if(child == 0){
-                success = EXIT_FAILURE;
                 success = exploitMain(4, entryExploit);
-                _exit(23);
+                 _exit(23);
             }         
             //o exploit foi alterado para que quando ele tem sucesso ele retorna 
             //exit_success
