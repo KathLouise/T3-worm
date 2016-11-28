@@ -20,27 +20,54 @@
 #define TAM_KEY 62
 #define TAM_LOGIN 4
 
-void iterate(char *str, const char *base[], int idx, int len, FILE *output) {
-    int i;
-    
-    if (idx < (len - 1)) {
-        for (i = 0; i < TAM_KEY; ++i) {
-            str[idx] = *base[i];
-            iterate(str, base, idx + 1, len, output);
-        }
-    }else{
-        for (i = 0; i < TAM_KEY; ++i) {
-            str[idx] = *base[i];
-            fprintf(output, "%s\n", str);
-        }
-    }
+#define TRUE 1
+#define FALSE 0
 
+//encontra a próxima sequencia somando um
+//se o próximo número for maior que o vetor, retorna FALSE
+//ex: para n= 3, m = 2 
+//o próximo de 001 é 010
+int proxima(int seq[], int n, int m) {
+    int i = n-1;
+    while (i>= 0) {
+        seq[i] = (seq[i] +1) % m;
+        if (seq[i] == 0) 
+        	i--;
+        else 
+        	return TRUE;
+     }
+     return FALSE;
 }
 
+
 void keyGenerator(unsigned int len){
-    const char *letters[TAM_KEY] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","X","W","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","x","w","y","z", "0","1","2","3","4","5","6","7","8","9"};
-    char concat[8];
     FILE *output;
+
+	int i;
+    char c;
+    
+	int n = len + 1;//numero de caracteres ou posições de uma sequencia
+	int m = TAM_KEY; //numero total de elementos, objetos
+
+	int seq[n+1];
+	char password[n+1];
+	//cria o vetor de objetos
+	char objetos[m];
+
+	i=0;
+	for (c='A';c<='Z';c++){
+		objetos[i]=c;
+		i++;
+	}
+	for (c='a';c<='z';c++){
+		objetos[i]=c;
+		i++;
+	}
+	for (c='0';c<='9';c++){
+		objetos[i]=c;
+		i++;
+	}
+
 
     output = fopen("chaves.txt","w+");
     if(output == NULL){
@@ -48,9 +75,30 @@ void keyGenerator(unsigned int len){
         exit(0);
     }
 
-    memset(concat, 0, 8);
+	//para enumerar todas as sequencias usa-se o algoritmo explicado em:
+	//http://www.ime.usp.br/~mms/mac1222s2013/19%20-%20algoritmos%20de%20enumeracao.pdf
+	//primeiro cria uma sequencia númerica com n posicoes e m possíveis digitos, de 0 até m-1
+	//encontra-se a próxima sequencia somando 1, repete até encontrar todas sequencias
+	//ex: n=3 e m=2: começa de 000, e soma 1: 001, 010, até o último 111
+	
+	//antes de usar o md5 converte-se a sequencia numerica na sequencia de objetos ou letras
+	
+	//cria a primeira sequencia
+	for (i=0; i<n; i++) 
+    	seq[i] = 0;
+    
+    do {      
+       	//converte a sequencia numerica na sequencia de letras
+       	for (i=0; i<n;i++)
+       		password[i]=objetos[seq[i]];
+        	password[i]='\0';
+        	
+        	fprintf(output, "%s\n", password);
 
-    iterate(concat, letters, 0, len, output);
+    	//gera a próxima sequencia
+   	} while (proxima(seq, n, m));
+	
+
     fclose(output);
 }
 
