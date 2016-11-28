@@ -82,7 +82,7 @@ void fileTransfer(char *ip, char *username, char *password){
     char stru[10] = "STRU F\n";
     char pasv[10] = "PASV\n";
     char cwd[100] = "CWD /home/";
-    char cwdWD[100] = "CWD Asgn03KLG/\n";
+    char cwdWD[100] = "CWD Asgn03HK/\n";
     char pwd[10] = "PWD\n";
     char mkd[20] = "MKD Asgn03KLG\n";
     char quit[10] = "QUIT\n";

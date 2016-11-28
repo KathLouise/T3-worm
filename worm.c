@@ -69,6 +69,7 @@ void main(int argc, char *argv[]){
     printf("Target: %s %s\n",paramIPPort[0],paramIPPort[1]);
     
     printf("\n");
+    printf("-----------------------------------\n");
     printf("Target Selection finalizado\n"); 
 
     printf("-----------------------------------\n");
