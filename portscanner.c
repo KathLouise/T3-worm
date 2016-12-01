@@ -1,6 +1,7 @@
 //-------------------------------------------------------------------//
 // UNIVERSIDADE FEDERAL DO PARANÁ                                    //
-// KATHERYNE LOUISE GRAF     GRR:20120706   IDENTIFICADOR: KLG12     //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
 // CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
 //-------------------------------------------------------------------//
 // BIBLIOTECAS

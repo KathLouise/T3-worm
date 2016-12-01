@@ -1,3 +1,11 @@
+//-------------------------------------------------------------------//
+// UNIVERSIDADE FEDERAL DO PARANÁ                                    //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
+// CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
+//-------------------------------------------------------------------//
+// BIBLIOTECAS
+//-------------------------------------------------------------------//
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -16,17 +24,21 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <arpa/inet.h>
-
+//-------------------------------------------------------------------//
+// DEFINES
+//-------------------------------------------------------------------//
 #define TAM_KEY 62
 #define TAM_LOGIN 4
-
 #define TRUE 1
 #define FALSE 0
+//-------------------------------------------------------------------//
+// FUNÇÕES
+//-------------------------------------------------------------------//
+// Função que encontra a próxima sequencia somando um
+// se o próximo número for maior que o vetor, retorna FALSE
+// ex: para n= 3, m = 2 
+// o próximo de 001 é 010
 
-//encontra a próxima sequencia somando um
-//se o próximo número for maior que o vetor, retorna FALSE
-//ex: para n= 3, m = 2 
-//o próximo de 001 é 010
 int proxima(int seq[], int n, int m) {
     int i = n-1;
     while (i>= 0) {
@@ -38,7 +50,9 @@ int proxima(int seq[], int n, int m) {
      }
      return FALSE;
 }
-
+//-------------------------------------------------------------------//
+// Gera todas as combinações de chave segundo o tamanho passado em Len
+// E salva dentro do arquivo output
 
 void keyGenerator(unsigned int len){
     FILE *output;
@@ -101,6 +115,11 @@ void keyGenerator(unsigned int len){
 
     fclose(output);
 }
+//-------------------------------------------------------------------//
+// Função que testa o usuário e a senha por ftp
+// Retorna EXIT_SUCCESS, se caso encontrar um usuário e uma senha 
+// que faça login
+// Retorna EXIT_FAILURE, se não conseguir achar
 
 int match(char *username, char *password, char *ip){
     char buffer[1024];
@@ -183,6 +202,11 @@ int match(char *username, char *password, char *ip){
 
     return achou;
 }
+//-------------------------------------------------------------------//
+// É a função "main" do Força Bruta 
+// Recebe como parametro o tamanho da chave, o ip da vitima,
+// duas variaveis para guardar o nome do usuário e a senha se encontrar
+// retorna 1, se achou, ou 0 se falhou
 
 int bruteforce(unsigned int lenKey, char *ip, char *username, char *password){
     char *login[TAM_LOGIN] = {"usuario", "kath", "teste"};

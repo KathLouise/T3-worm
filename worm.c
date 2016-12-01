@@ -15,6 +15,8 @@ void main(int argc, char *argv[]){
     char range_ipSeq[100];
     char range_portSeq[100];
     char username[25];
+    char ipProp[100];
+    char portProp[100];
     char pass[25];
     char **paramIPPort;
     char **entryExploit = malloc(4 * sizeof(char*));
@@ -33,8 +35,9 @@ void main(int argc, char *argv[]){
     //Pega os ranges
     strcpy(range_ipSeq, argv[1]);
     strcpy(range_portSeq, argv[2]);
+    strcpy(ipProp, argv[1]);
+    strcpy(portProp, argv[2]);
     lenKey = atoi(argv[3]);
-    
     for(i=0; i < 4 ; ++i ){
         entryExploit[i] = (char*) malloc(20*sizeof(char)); 
     }
@@ -124,8 +127,8 @@ void main(int argc, char *argv[]){
     printf("-----------------------------------\n");
     printf("Propagation Engine iniciado\n"); 
     printf("-----------------------------------\n");
-    
-    propagation_engine(paramIPPort[0], username, pass, range_ipSeq, range_portSeq, lenKey);
+    printf("\n %s \n", ipProp);    
+    propagation_engine(paramIPPort[0], username, pass, ipProp, portProp, lenKey);
     
     printf("-----------------------------------\n");
     printf("Propagation Engine finalizado\n"); 
