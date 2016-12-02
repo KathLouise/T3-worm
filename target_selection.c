@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------//
 // UNIVERSIDADE FEDERAL DO PARANÁ                                    //
-// HENRIQUE HEPP						                             //
-// KATHERYNE LOUISE GRAF     					                     //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
 // CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
 //-------------------------------------------------------------------//
 // BIBLIOTECAS
