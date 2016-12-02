@@ -1,7 +1,20 @@
+//-------------------------------------------------------------------//
+// UNIVERSIDADE FEDERAL DO PARANÁ                                    //
+// HENRIQUE HEPP						                             //
+// KATHERYNE LOUISE GRAF     					                     //
+// CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
+//-------------------------------------------------------------------//
+// BIBLIOTECAS
+//-------------------------------------------------------------------//
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+//-------------------------------------------------------------------//
+// FUNÇÕES
+//-------------------------------------------------------------------//
+// Esta função escolhe um numero aleatóriamente, entre o número total
+// de linhas contidas no arquivo, e salva o ip e a porta
 
 void randomLine(char **lines, char **param, int numberLines){
     int random, i = 0;
@@ -20,6 +33,11 @@ void randomLine(char **lines, char **param, int numberLines){
     }
     
 }
+//-------------------------------------------------------------------//
+// Esta função é o "main" do target_selection, nela, o arquivo gerado
+// pelo portscanner com os IPs, é lido e tem seu numero de linhas 
+// contado, para que depois a randomLine possa escolher uma delas
+// de forma aleatória
 
 void target_selection(char **param){
     FILE *input;
@@ -61,3 +79,4 @@ void target_selection(char **param){
     fclose(input);
     free(line);
 }
+//-------------------------------------------------------------------//
