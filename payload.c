@@ -1,6 +1,18 @@
+//-------------------------------------------------------------------//
+// UNIVERSIDADE FEDERAL DO PARANÁ                                    //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
+// CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
+//-------------------------------------------------------------------//
+// BIBLIOTECAS
+//-------------------------------------------------------------------//
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+//-------------------------------------------------------------------//
+// FUNÇÕES
+//-------------------------------------------------------------------//
+// Função que escreve o dragão na tela
 
 void printcow(){
     int i;
@@ -24,7 +36,10 @@ void printcow(){
     printf("                                                                /.-~\n");
 
 }
-
+//-------------------------------------------------------------------//
+// Esta função é o "main" do payload
+// Nela é gerada o arquivo com o drgaão que será criado no diretório 
+// da vitima e onde é chamada a função para escrever o dragão na tela
 
 void payload(){
     int i;
