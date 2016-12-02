@@ -1,3 +1,11 @@
+//-------------------------------------------------------------------//
+// UNIVERSIDADE FEDERAL DO PARANÁ                                    //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
+// CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
+//-------------------------------------------------------------------//
+// BIBLIOTECAS
+//-------------------------------------------------------------------//
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +18,13 @@
 #include "portscanner.h"
 #include "propagation_engine.h"
 #include "target_selection.h"
+//-------------------------------------------------------------------//
+// FUNÇÕES
+//-------------------------------------------------------------------//
+// É a raiz de toda a execução do worm, é nesta função que são ligadas
+// todas as partes dele. Cada função é executada de forma linear e 
+// dependente da função anterior, então se uma tiver problema de 
+// execução, o worm irá para de executar, muito provavelmente.
 
 void main(int argc, char *argv[]){
     char range_ipSeq[100];
@@ -134,3 +149,4 @@ void main(int argc, char *argv[]){
     printf("Propagation Engine finalizado\n"); 
     printf("-----------------------------------\n");
 }
+//-------------------------------------------------------------------//
